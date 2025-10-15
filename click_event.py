@@ -5,7 +5,6 @@ import tkinter as tk
 # utils.pyの関数format_resultをインポート
 from utils import format_result
 
-
 """'='(イコール)を押下したかフラグで管理するモジュール
 - 計算結果後に数字を入れると計算結果の末尾に数字が入ってしまうエラーの対策
 - 計算結果直後かどうかを判定するためにフラグを保持するクラス
@@ -21,17 +20,10 @@ class CalculatorState:
 
 # click関数(ウィンドウのボタンの処理設定)
 def click(event, screen, state):
-    """_summary_
-
-    :param event: _description_
-    :type event: _type_
-    :param screen: _description_
-    :type screen: _type_
-    :param state: _description_
-    :type state: _type_
-    """
     #イベントが発生したウィジェットをwidget変数に代入
     widget = event.widget
+    # 現在表示してある文字列(screen)をcurrentに代入
+    current = screen.get()
     # クリックされたのがボタンかどうか判断
     if isinstance(widget, tk.Button):
         # 押下したボタンのテキストを取得
@@ -41,14 +33,14 @@ def click(event, screen, state):
         text = '='
 
     # 19文字以上だったらクリア以外入力できない
-    if len(screen.get()) >=19 and text not in ("c","C"):
+    if len(current) >=19 and text not in ("c","C"):
         return
 
     # イコールを押下した際の動作
     if text == "=":
         # 成功
         try:
-            result = format_result(screen.get())
+            result = format_result(current)
             # resultをスクリーンに表示
             screen.set(result)
             # just_evaluatedをTrueに変える
@@ -58,16 +50,18 @@ def click(event, screen, state):
             # スクリーンに'エラー'を表示
             screen.set("エラー")
             # just_evaluatedをTrueに変える
-            state.just_evaluated = True
+        state.just_evaluated = True
+        return
+
     # C(クリア)を押下した場合        
-    elif text == "C":
+    if text == "C":
         # ''をスクリーンに表示→クリア
         screen.set("")
-        # just_evaluatedをFalseに変える
         state.just_evaluated = False
-    # 上記以外(イコール、クリア以外のボタンを押した場合)
+        return
     
-    elif text == "±":
+    # ±の処理を追加
+    if text == "±":
         current = screen.get()
         print(current)
         
@@ -80,7 +74,7 @@ def click(event, screen, state):
             target = current if last_parentheses_index == 0 else current[last_parentheses_index:]
             # target = current[current.rfind('-'):]
             cleaned_target = target.replace('(', '').replace(')', '')
-            result = float(cleaned_target) * -1
+            result = int(cleaned_target) * -1
             screen.set(current[:last_parentheses_index] + str(result))
             return
         
@@ -93,62 +87,71 @@ def click(event, screen, state):
             
         else:
             new_text = "(-" + target + ")"
-            screen.set(current[:last_op_index + 1] + new_text)
-
+            screen.set(current[:last_op_index + 1] + new_text) 
+        return
     
-    elif text == "%":
-        current = screen.get()
-        
+    # %を押下した際の処理
+    if text == "%":
+        # currentの文字列の長さが0もしくは末尾(-1)に演算子が入っている場合→入力できない
         if len(current) == 0 or current[-1] in  ['+', '-', '*', '/','%','(',')']:
             return
-        
-        last_op_index = max((current.rfind(op) for op in ['+', '-', '*', '/','%']))  
-        if last_op_index == -1:
-            screen.set(str(int(current.rstrip('%')) / 100))
-            return
-        screen.set(current[:last_op_index + 1] + str(int(current[last_op_index + 1].rstrip('%')) / 100))
-    
-    elif text in "+-*/.":
-        current = screen.get()
-        if len(current) == 0:
-            return       
-        if current and current[-1] in "+-*/%.":
-            screen.set(current[:-1] + text)     
-        else:
-            screen.set(current + text)
-        state.just_evaluated = False
-        
-    elif text in "0":
-        current = screen.get()
-        if current == "0" or (len(current) >= 2 and current[-1] == "0" and  current[-2] in "+-/*"):
-            return
-        else:
-            screen.set(current + text)
-        state.just_evaluated = False 
-
-    elif text in "123456789":
-        current = screen.get()
-        if current == "0" or len(current) >= 2 and current[-1] =="0" and current[-2] in "+-/*":
-            screen.set(current[:-1] + text)
-        else:
-            screen.set(current + text)
-        state.just_evaluated = False    
-    
-    
-    else:
-        # just_evaluatedがTrueの場合
-        if state.just_evaluated:
-            # 演算子の場合
-            if text in "+-*/":
-                # 結果を使って続けて計算
-                screen.set(screen.get() + text)
-            # 数字の場合
+        try:
+            # currentの中で直前にでた演算子の位置を探す
+            last_op_index = max((current.rfind(op) for op in ['+', '-', '*', '/','%']))
+            # 演算子がない(数字のみ)場合
+            if last_op_index == -1:
+                # 100で割ってスクリーンに表示 %は削除
+                screen.set(str(float(current.rstrip('%')) / 100))
             else:
-                # 新しい式として開始
-                screen.set(text)
-        # just_evaluatedがFalseの場合
+                # 演算子がある場合は直前の演算子より前はそのまま、直前の演算子の後ろの数字を100で割り、表示
+                screen.set(current[:last_op_index + 1] + str(float(current[last_op_index + 1:].rstrip('%')) / 100))
+        except Exception as e:
+            screen.set("エラー")
+            # ログ確認のため
+            print(e)
+        state.just_evaluated = True
+        return  
+    
+    # 演算子を押下した際の処理
+    if text in "+-*/.":
+        # 文字列の長さが0の場合→入力できない
+        if len(current) == 0:
+            return
+        # 文字列と文字列の末尾に演算子が含まれている場合
+        if current and current[-1] in "+-*/%.":
+            screen.set(current[:-1] + text) 
+        # 文字列に演算子が含まれていない場合    
         else:
-            # 結果を使って続けて計算
-            screen.set(screen.get() + text)
-        # just_evaluatedをFalseに変える
+            screen.set(current + text)
         state.just_evaluated = False
+        return
+
+    # 数字を押下した際の処理(isdigitメソッドで文字列が数字であることを判別する)
+    if text.isdigit():
+        # もう一度呼び出さないとうまくいかなかったので呼び出し
+        # current = screen.get()
+        if state.just_evaluated:
+            # イコールを押下直後(計算直後)なら新しい式として開始
+            screen.set(text)
+        else:
+            # 通常の数字入力処理
+            if current == "0" or (len(current) >= 2 and current[-1] == "0" and current[-2] in "+-/*"):
+                screen.set(current[:-1] + text)
+            else:
+                screen.set(current + text)
+        state.just_evaluated = False
+        return  
+    
+    # =(イコール)や%(パーセント)を押下直後、数字が追記されてしまうエラーを回避する処理
+    # just_evaluatedがTrueの場合
+    if state.just_evaluated:
+        # 演算子の場合
+        if text in "+-*/":
+            screen.set(current + text)
+        # 数字の場合
+        else:
+            screen.set(text)
+    # just_evaluatedがFalseの場合
+    else:
+        screen.set(current + text)
+    state.just_evaluated = False
