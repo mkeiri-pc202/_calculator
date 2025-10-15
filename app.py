@@ -22,74 +22,10 @@ state = CalculatorState()
 
 # ラッパー関数の定義(コードの分離や整理、拡張性を持たせるため)して、screenを渡す
 def handle_click(event):
-    print(event.widget)    
     click_event.click(event, screen, state)
-
-#キー入力と実行する機能との紐づけ
 def handle_key(event):
-    match event.char:
-        case '0':
-            button_widget = root.nametowidget('.!button21')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット
-        case '1':
-            button_widget = root.nametowidget('.!button17')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット
-        case '2':
-            button_widget = root.nametowidget('.!button18')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット
-        case '3':
-            button_widget = root.nametowidget('.!button19')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '4':
-            button_widget = root.nametowidget('.!button13')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '5':
-            button_widget = root.nametowidget('.!button14')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '6':
-            button_widget = root.nametowidget('.!button15')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '7':
-            button_widget = root.nametowidget('.!button9')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '8':
-            button_widget = root.nametowidget('.!button10')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '9':
-            button_widget = root.nametowidget('.!button11')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '%':
-            button_widget = root.nametowidget('.!button7')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case 'c'|'C'|'\x08':
-            button_widget = root.nametowidget('.!button8')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '(':
-            button_widget = root.nametowidget('.!button5')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case ')':
-            button_widget = root.nametowidget('.!button6')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット  
-        case '.':
-            button_widget = root.nametowidget('.!button22')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット  
-        case '='|'\r':
-            button_widget = root.nametowidget('.!button23')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '+':
-            button_widget = root.nametowidget('.!button24')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case '-':
-            button_widget = root.nametowidget('.!button20')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット 
-        case '*':
-            button_widget = root.nametowidget('.!button16')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット 
-        case '/':
-            button_widget = root.nametowidget('.!button12')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット             
-    click_event.click(event, screen, state)
-        
+    key_input.key_input(event, screen, state)
+
 # キーボードを押下したら、handle_click関数を呼び出す(=キーボード操作対応)
 entry.bind("<Return>", handle_click)
 # ウィンドウのボタンを押下したら、handle_key関数を呼び出す
@@ -109,11 +45,9 @@ buttons = [
 # ボタンの位置を始める位置を設定(1行目、左端)
 row, col = 1, 0
 # ボタンのループ処理(buttonsリストの文字列に対して繰り返し処理)
-
-button_refs = {}
 for button in buttons:
     # ボタンを作成(ボタンに表示する文字,フォントとサイズ, ボタンの幅, 高さ)
-    btn = tk.Button(root, text=button, font="Arial 15", width=5, height=2, state="normal")
+    btn = tk.Button(root, text=button, font="Arial 15", width=5, height=2)
     # ボタンをグリッドに配置(row=行, col=列)
     btn.grid(row=row, column=col)
     # ボタンがマウスの左クリックされたとき、click関数を呼び出す
@@ -124,7 +58,7 @@ for button in buttons:
     if col > 3:
         col = 0
         row += 1
-    
+
 if __name__ == '__main__':
     # ウインドウ表示実行ループ
     root.mainloop()
