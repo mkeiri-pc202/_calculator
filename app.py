@@ -25,6 +25,7 @@ def handle_click(event):
     print(event.widget)    
     click_event.click(event, screen, state)
 
+#キー入力と実行する機能との紐づけ
 def handle_key(event):
     match event.char:
         case '0':
