@@ -87,7 +87,10 @@ def handle_key(event):
             event.widget = button_widget  # ウィジェットオブジェクトをセット 
         case '/':
             button_widget = root.nametowidget('.!button12')
-            event.widget = button_widget  # ウィジェットオブジェクトをセット             
+            event.widget = button_widget  # ウィジェットオブジェクトをセット
+        case _:
+            return #上記にないキーを押下したときにエラーになってたので追記
+        
     click_event.click(event, screen, state)
         
 # キーボードを押下したら、handle_click関数を呼び出す(=キーボード操作対応)
