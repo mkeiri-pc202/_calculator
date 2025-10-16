@@ -1,0 +1,1 @@
+C:\Users\mkeiri2f\anaconda3\condabin\conda activate team_a
