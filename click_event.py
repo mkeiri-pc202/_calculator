@@ -106,7 +106,8 @@ def click(event, screen, state):
     # %を押下した際の処理
     if text == "%":
         # currentの文字列の長さが0もしくは末尾(-1)に演算子が入っている場合→入力できない
-        if len(current) == 0 or current[-1] in  ['+', '-', '*', '/','%','(',')']:
+        # √が入らないように追加
+        if len(current) == 0 or current[-1] in  ['√','+', '-', '*', '/','%','(',')']:
             return
         try:
             # currentの中で直前にでた演算子の位置を探す
@@ -131,7 +132,7 @@ def click(event, screen, state):
         if len(current) == 0:
             return
         # 文字列と文字列の末尾に演算子が含まれている場合
-        if current and current[-1] in "+-*/%.":
+        if current and current[-1] in "√+-*/%.":
             screen.set(current[:-1] + text) 
         # 文字列に演算子が含まれていない場合    
         else:
