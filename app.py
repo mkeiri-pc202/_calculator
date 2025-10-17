@@ -22,7 +22,6 @@ state = CalculatorState()
 
 # ラッパー関数の定義(コードの分離や整理、拡張性を持たせるため)して、screenを渡す
 def handle_click(event):
-    print(event.widget)    
     click_event.click(event, screen, state)
 
 #キー入力と実行する機能との紐づけ
@@ -61,7 +60,7 @@ def handle_key(event):
         case '%':
             button_widget = root.nametowidget('.!button7')
             event.widget = button_widget  # ウィジェットオブジェクトをセット    
-        case 'c'|'C'|'\x08':
+        case 'c'|'C':
             button_widget = root.nametowidget('.!button8')
             event.widget = button_widget  # ウィジェットオブジェクトをセット    
         case '(':
@@ -88,6 +87,9 @@ def handle_key(event):
         case '/':
             button_widget = root.nametowidget('.!button12')
             event.widget = button_widget  # ウィジェットオブジェクトをセット
+        case '\x08':
+            button_widget = root.nametowidget('.!button4')
+            event.widget = button_widget  # ウィジェットオブジェクトをセット   
         case _:
             return #上記にないキーを押下したときにエラーになってたので追記
         
@@ -100,7 +102,7 @@ root.bind("<Key>", handle_key)
 
 # ボタンの設定
 buttons = [
-    "√", "±", " ", " ",
+    "√", "±", " ", "BS",
     "(", ")", "%", "C",
     "7", "8", "9", "/",
     "4", "5", "6", "*",
