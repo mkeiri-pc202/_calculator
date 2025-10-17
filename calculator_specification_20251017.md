@@ -135,11 +135,11 @@
 ---
 
 ## 13. ビルド・実行方法
--　OS	Windows 11
--　言語 / Python 3.13
--　使用ツール	VSCode
--　フレームワーク	tkinter / sympy 1.14.0
--　仮想環境	conda
+- OS	Windows 11
+- 言語 / Python 3.13
+- 使用ツール	VSCode
+- フレームワーク	tkinter / sympy 1.14.0
+- 仮想環境	conda
 
 ---
 
