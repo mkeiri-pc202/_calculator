@@ -4,7 +4,6 @@
 import tkinter as tk
 # click関数を使うために同フォルダのclick_event.pyとkey_inputをインポート
 import click_event
-import key_input
 from click_event import CalculatorState
 
 # tk(tkinterをインポート)をroot(ウインドウ)に代入
@@ -102,7 +101,7 @@ root.bind("<Key>", handle_key)
 
 # ボタンの設定
 buttons = [
-    "√", "±", " ", "BS",
+    "√", "±", "e", "BS",
     "(", ")", "%", "C",
     "7", "8", "9", "/",
     "4", "5", "6", "*",
