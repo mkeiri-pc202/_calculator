@@ -52,6 +52,12 @@ def click(event, screen, state):
             # just_evaluatedをTrueに変える
         state.just_evaluated = True
         return
+    
+    # BS（バックスペース）を押下した場合
+    if text == "BS":
+        screen.set(current[:-1])
+        state.just_evaluated = False
+        return
 
     # C(クリア)を押下した場合        
     if text == "C":
@@ -60,24 +66,31 @@ def click(event, screen, state):
         state.just_evaluated = False
         return
     
-    # ±の処理を追加
+    # ±の処理
     if text == "±":
         current = screen.get()
         print(current)
-        
+
+    #数値以外の文字列が入力されていたら処理を飛ばす 
         if len(current) == 0 or current[-1] in  ['+', '-', '*', '/','%','(']:
             return
         
+    #負の整数(-1)などが入ってた時に1に戻す処理
         if current[-1] == ')' and current.rfind('(') != -1 and current[current.rfind('(') +1] == '-':
         
             last_parentheses_index = max((current.rfind(op) for op in ['(']))       
             target = current if last_parentheses_index == 0 else current[last_parentheses_index:]
             # target = current[current.rfind('-'):]
             cleaned_target = target.replace('(', '').replace(')', '')
-            result = int(cleaned_target) * -1
+            
+            # 変換後の値がすべてfloatになっていたので修正（intに変換した値と別だったらfloatのまま出力
+            result = float(cleaned_target) * -1
+            if result == int(result):
+                result = int(result)            
             screen.set(current[:last_parentheses_index] + str(result))
             return
         
+    #正の値(1など)が入ってた時に(-1)に変更する処理
         last_op_index = max((current.rfind(op) for op in ['+', '-', '*', '/','%']))       
         target = current if last_op_index == -1 else current[last_op_index + 1:]
         
