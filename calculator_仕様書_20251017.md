@@ -1,6 +1,6 @@
 # 電卓プログラム 仕様書
 
-バージョン: 0.1  
+バージョン: 1.0  
 作成日: [2025/10/17]  
 作成者: [作成者名 / 松本経理ビジネス専門学校 Team A ]  
 リポジトリ: [mkeiri-pc202/_calculator](https://github.com/mkeiri-pc202/_calculator)
