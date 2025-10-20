@@ -30,7 +30,7 @@
 ---
 
 ## 4. 機能要件
-<img width="377" height="552" alt="Image" src="https://github.com/user-attachments/assets/ba23ecda-da43-433c-9ab4-041a7fc008e2" />
+<img width="177" height="352" alt="Image" src="https://github.com/user-attachments/assets/ba23ecda-da43-433c-9ab4-041a7fc008e2" />
 
 
 ### 4.1 基本機能
