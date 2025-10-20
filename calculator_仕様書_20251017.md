@@ -30,7 +30,7 @@
 ---
 
 ## 4. 機能要件
-https://github.com/mkeiri-pc202/_calculator/issues/7#issue-3530712668
+![calclator](https://github.com/mkeiri-pc202/_calculator/issues/7#issue-3530712668)
 
 
 ### 4.1 基本機能
