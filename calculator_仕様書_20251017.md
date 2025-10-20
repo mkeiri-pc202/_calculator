@@ -145,7 +145,7 @@
 - 言語 / Python 3.13
 - 使用ツール	VSCode
 - フレームワーク	tkinter / sympy 1.14.0
-- 仮想環境	Anaconda
+- 仮想環境 Anaconda(conda 24.9.2)
 
 ---
 
