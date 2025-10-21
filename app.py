@@ -2,47 +2,44 @@
 
 import tkinter as tk
 from input_handler import handle_input, CalculatorState
+from functools import partial
 
 root = tk.Tk()
 root.title("電卓")
 
 screen = tk.StringVar()
-entry = tk.Entry(root, textvariable=screen, font="Arial 20", justify="right", state="readonly")# ウィジェットを画面のグリッドに配置(最上段、左端、五列分の幅を持たせる)
+entry = tk.Entry(root, textvariable=screen, font=("Arial", 20), justify="right", state="readonly", takefocus=0)
 entry.grid(row=0, column=0, columnspan=5)
 
 state = CalculatorState()
 
-# ラッパー関数の定義(コードの分離や整理、拡張性を持たせるため)して、screenを渡す
+# ラッパー関数の定義
 def handle_click(event):
     text = event.widget.cget("text") if hasattr(event.widget, "cget") else "="
     handle_input(text, screen, state)
 
-def handle_key(event):
+def handle_key(event, screen, state):
     key = event.char
+    allowed_chars = "0123456789+-*/().%"
+    
     if event.keysym == "Return":
         handle_input("=", screen, state)
     elif event.keysym == "BackSpace":
         screen.set(screen.get()[:-1])
         state.just_evaluated = False
-    else:
+    elif key in allowed_chars:
         handle_input(key, screen, state)
-
-def handle_keypress(event, screen, state):
-    key = event.char
-    if event.keysym == "Return":
-        handle_input("=", screen, state)
-    elif event.keysym == "BackSpace":
-        screen.set(screen.get()[:-1])
-        state.just_evaluated = False
     else:
-        handle_input(key, screen, state)
+        return
 
-entry.bind("<Return>", lambda event: handle_input("=", screen, state))
-root.bind("<Key>", lambda event: handle_keypress(event, screen, state))
+# partialで引数を固定した関数を作成
+bound_handle_key = partial(handle_key, screen=screen, state=state)
 
-# ボタンの設定
+root.bind("<Key>", bound_handle_key)
+
+# ボタンの設定 (右上２つは空きボタン)
 buttons = [
-    "√", "±", " ", " ",
+    "√", "±", "", "",
     "(", ")", "%", "C",
     "7", "8", "9", "/",
     "4", "5", "6", "*",
