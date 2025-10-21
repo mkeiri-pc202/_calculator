@@ -4,6 +4,8 @@
 
 from sympy import sympify
 
+ALLOWED_OPERATORS = "+-*/%."
+
 def format_result(expr: str) -> str:
     """数式を評価して、整数なら整数、小数なら小数として文字列で返す関数
 
@@ -26,5 +28,5 @@ def format_result(expr: str) -> str:
             # False(小数)の場合はそのまま浮動小数点型で文字列で返す
             return str(num)
     # 例外はエラーで返す
-    except Exception:
+    except Exception as e:
         return "エラー"

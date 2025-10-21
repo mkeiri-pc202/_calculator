@@ -1,4 +1,6 @@
 from utils import format_result
+from utils import ALLOWED_OPERATORS
+import re
 
 class CalculatorState:
     def __init__(self):
@@ -6,7 +8,6 @@ class CalculatorState:
 
 def handle_input(text: str, screen, state):
     current = screen.get()
-    operators = "+-*/%."
 
     # クリア
     if text.lower() == "c":
@@ -19,29 +20,31 @@ def handle_input(text: str, screen, state):
         try:
             result = format_result(current)
             screen.set(result)
-        except Exception:
+        except Exception as e:
             screen.set("エラー")
+            print(e)
         state.just_evaluated = True
         return
     
     # パーセント
     if text == "%":
-        if len(current) == 0 or current[-1] in operators + "()":
-            return
         try:
-            last_op_index = max((current.rfind(op) for op in operators))
-            if last_op_index == -1:
-                screen.set(str(float(current.rfind("%")) / 100))
+            match = re.search(r'(\d+(\.\d+)?)%?$', current)
+            if match:
+                value = float(match.group(1)) / 100
+                new_expr = re.sub(r'(\d+(\.\d+)?)%?$', str(value), current)
+                screen.set(new_expr)
+                state.just_evaluated = True
             else:
-                screen.set(current[:last_op_index + 1] + str(float(current[last_op_index + 1:].rstrip('%')) / 100))
-        except Exception:
+                screen.set("エラー")
+        except Exception as e:
             screen.set("エラー")
-        state.just_evaluated = True
+            print(e)
         return
     
     # プラスマイナス
     if text == "±":
-        if len(current) == 0 or current[-1] in operators + "(":
+        if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
             return
         if current[-1] == ")" and current.rfind("(") != -1 and current[current.rfind("(") + 1] == '-':
             last_parentheses_index = current.rfind("(")
@@ -50,7 +53,7 @@ def handle_input(text: str, screen, state):
             result = str(int(cleaned) * -1)
             screen.set(current[:last_parentheses_index] + result)
             return
-        last_op_index = max((current.rfind(op) for op in operators))
+        last_op_index = max((current.rfind(op) for op in ALLOWED_OPERATORS))
         target = current if last_op_index == -1 else current[last_op_index + 1:]
         new_text = f"(-{target})"
         screen.set(current[:last_op_index + 1] + new_text)
@@ -59,21 +62,18 @@ def handle_input(text: str, screen, state):
     
     # 数字
     if text.isdigit():
-        if state.just_evaluated:
-            if current and current[-1] in "+-*/%.":
-                screen.set(text)
-            else:
-                screen.set(text)
-        else:        
+        if current and current[-1] in "+-*/%.":
             screen.set(current + text)
+        else:        
+            screen.set(text)
         state.just_evaluated = False
         return
     
     # 演算子
-    if text in operators:
+    if text in ALLOWED_OPERATORS:
         if len(current) == 0:
             return
-        if current[-1] in operators:
+        if current[-1] in ALLOWED_OPERATORS:
             screen.set(current[:-1] + text)
         else:
             screen.set(current + text)
@@ -88,7 +88,7 @@ def handle_input(text: str, screen, state):
     
     # その他
     if state.just_evaluated:
-        if text in operators:
+        if text in ALLOWED_OPERATORS:
             screen.set(current + text)
         else:
             screen.set(text)
