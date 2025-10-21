@@ -15,7 +15,11 @@ state = CalculatorState()
 
 # ラッパー関数の定義
 def handle_click(event):
-    text = event.widget.cget("text") if hasattr(event.widget, "cget") else "="
+    text = event.widget.cget("text") 
+    if hasattr(event.widget, "cget"):
+        pass
+    else:
+        "="
     handle_input(text, screen, state)
 
 def handle_key(event, screen, state):
