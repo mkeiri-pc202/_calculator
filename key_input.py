@@ -34,9 +34,9 @@ def key_input(event, screen, state):
 
     # Enterキー 
     if event.keysym == "Return":
-            screen.set(format_result(current))
-            state.just_evaluated = True
-            return 
+        screen.set(format_result(current))
+        state.just_evaluated = True
+        return 
     
     # Backspaceキー→右端の数字を1桁消す
     if event.keysym == "BackSpace":
