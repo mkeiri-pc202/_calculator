@@ -106,7 +106,7 @@
   - utils.py(calc.pyで作成したデータの受け取り、結果の表示) 
 
 ### 9.1 データフロー（簡易）
-![Image](https://github.com/user-attachments/assets/acd7a77f-50a9-40ba-8072-898f5eba092f)
+<img width="377" height="552" alt="Image" src="https://github.com/user-attachments/assets/d6f11707-f4bf-408d-8a5a-76cc6fa86608" />
 
 ---
 
