@@ -106,8 +106,7 @@
   - utils.py(calc.pyで作成したデータの受け取り、結果の表示) 
 
 ### 9.1 データフロー（簡易）
-入力 → click_event.py（文字列で入力されたデータを加工)→ 確定（イコールまたはEnterキーの入力）→ calc.py(入力されたデータから計算を行う) 
-→utils.py(calc.pyで作成したデータの受け取り)  → 出力表示
+![Image](https://github.com/user-attachments/assets/acd7a77f-50a9-40ba-8072-898f5eba092f)
 
 ---
 
