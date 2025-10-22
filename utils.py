@@ -14,19 +14,12 @@ def format_result(expr: str) -> str:
     :return: 評価結果を文字列で返す。例)5の場合は整数、2.5は小数、評価に失敗した場合はエラー
     :rtype: str
     """
-    # sympify関数を利用して入力した式(expr)を取り込み、resultに代入
     result = sympify(expr)
-    # 成功
     try:
-        # 結果を浮動小数点型にしてnumに代入
         num = float(result)
-        # is_integer()メソッドで整数か小数か判定
         if num.is_integer():
-            # True(整数)の場合は整数型にして文字列で返す
             return str(int(num))
         else:
-            # False(小数)の場合はそのまま浮動小数点型で文字列で返す
             return str(num)
-    # 例外はエラーで返す
     except Exception as e:
         return "エラー"
