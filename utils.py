@@ -4,7 +4,7 @@
 
 from sympy import sympify
 
-ALLOWED_OPERATORS = "+-*/%."
+ALLOWED_OPERATORS = "+-*/%." + "**"
 
 def format_result(expr: str) -> str:
     """数式を評価して、整数なら整数、小数なら小数として文字列で返す関数
