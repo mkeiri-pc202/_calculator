@@ -16,10 +16,6 @@ state = CalculatorState()
 # ラッパー関数の定義
 def handle_click(event):
     text = event.widget.cget("text") 
-    if hasattr(event.widget, "cget"):
-        pass
-    else:
-        "="
     handle_input(text, screen, state)
 
 def handle_key(event, screen, state):
@@ -41,12 +37,12 @@ bound_handle_key = partial(handle_key, screen=screen, state=state)
 
 root.bind("<Key>", bound_handle_key)
 
-# ボタンの設定 (右上２つは空きボタン)
+# ボタンの設定 (右上は空きボタン)
 buttons = [
-    "√", "±", "", "",
+    "√", "±", "^", "",
     "(", ")", "%", "C",
-    "7", "8", "9", "/",
-    "4", "5", "6", "*",
+    "7", "8", "9", "÷",
+    "4", "5", "6", "×",
     "1", "2", "3", "-",
     "0", ".", "=", "+",
 ]
