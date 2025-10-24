@@ -4,6 +4,11 @@ import re
 
 
 class CalculatorState:
+    """電卓の状態を保持するクラス
+
+    Attributes:
+
+    """
     def __init__(self):
         self.just_evaluated = False
 
@@ -11,7 +16,7 @@ class CalculatorState:
 def handle_input(text: str, screen, state):
     current = screen.get()
 
-# ボタン表記を内部記号に変換
+    # ボタン表記を内部記号に変換
     if text == "×":
         text = "*"
     elif text == "÷":
@@ -79,26 +84,24 @@ def handle_input(text: str, screen, state):
     #     screen.set(current[:last_op_index + 1] + new_text)
     #     return
 
-    # プラスマイナス
+    # プラスマイナス(正規表現で判定)
     if text == "±":
         if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
             return
         
-        match = re.search(r'\((\-?\d+(\.\d+)?)\)(?!.*\()', current)
+        # 通常時のマイナス付け替え
+        match = re.match(r'^-?\d+(\.\d+)?$', current)
         if match:
-            full = match.group(0)
-            num = match.group(1)
-
-            if num.startswith("-"):
-                new = "(" + num[1:] + ")"
+            num = current
+            if current.startswith("-"):
+                new_num = num[1:]
             else:
-                new = "(-" + num + ")"
-
-            new_expr = current[:match.start()] + new + current[match.end():]
-            screen.set(new_expr)
+                new_num = "-" + num
+            screen.set(new_num)
             state.just_evaluated = False
             return
-
+        
+        # 演算子直後の数字のマイナス付け替え
         match = re.search(r'([+\-*/(])(-?\d+(\.\d+)?)(?!.*[+\-*/(])', current)
         if match:
             num_start = match.start(2)
@@ -113,25 +116,22 @@ def handle_input(text: str, screen, state):
             screen.set(new_expr)
             state.just_evaluated = False
             return
-        
-        match = re.match(r'^-?\d+(\.\d+)?$', current)
+
+        # ()内の数字のマイナス付け替え
+        match = re.search(r'\((\-?\d+(\.\d+)?)\)(?!.*\()', current)
         if match:
-            if current.startswith("-"):
-                screen.set(current[1:])
+            full = match.group(0)
+            num = match.group(1)
+
+            if num.startswith("-"):
+                new = "(" + num[1:] + ")"
             else:
-                screen.set("-" + current)
+                new = "(-" + num + ")"
+
+            new_expr = current[:match.start()] + new + current[match.end():]
+            screen.set(new_expr)
             state.just_evaluated = False
             return
-
-        # target = match.end() if match else 0
-        # # 負→正
-        # if current[target] == "-":
-        #     screen.set(current[:target] + current[target + 1:])
-        # # 正→負
-        # else:
-        #     screen.set(current[:target] + "-" + current[target:])
-        # state.just_evaluated = False
-        # return
 
     # 括弧
     if text == "(":
