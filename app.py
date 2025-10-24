@@ -20,7 +20,7 @@ def handle_click(event):
 
 def handle_key(event, screen, state):
     key = event.char
-    allowed_chars = "0123456789+-*/().%"
+    allowed_chars = "0123456789+-*/().%^√"
     
     if event.keysym == "Return":
         handle_input("=", screen, state)

@@ -15,14 +15,13 @@ class CalculatorState:
 
 def handle_input(text: str, screen, state):
     current = screen.get()
+    miss_parenthesis = current.count("(") - current.count(")")
 
     # ボタン表記を内部記号に変換
     if text == "×":
         text = "*"
     elif text == "÷":
         text = "/"
-    # elif text == "^":
-    #     text = "**"
 
     # 19文字以上だったらクリア以外入力できない
     if len(current) >=19 and text not in ("c","C"):
@@ -38,17 +37,19 @@ def handle_input(text: str, screen, state):
     if text == "=":
         if current[-1] in ALLOWED_OPERATORS:
             return
-        else:
-            try:
-                result = format_result(current)
-                screen.set(result)
-                state.just_evaluated = True
-            except Exception as e:
-                screen.set("エラー")
-                print(e)
+
+        try:
+            if miss_parenthesis > 0:
+                current += miss_parenthesis * ")"
+            result = format_result(current)
+            screen.set(result)
+        except Exception as e:
+            screen.set("エラー")
+            print(e)
+
         state.just_evaluated = True
         return
-    
+            
     # パーセント
     if text == "%":
         try:
@@ -64,6 +65,18 @@ def handle_input(text: str, screen, state):
             screen.set("エラー")
             print(e)
         return
+    
+    # ルート
+    if text == "√":
+        if state.just_evaluated:
+            screen.set(text)
+        else:
+            if current == "0":
+                screen.set(text)
+            else:
+                screen.set(current + text)
+        state.just_evaluated = False
+        return        
     
     # プラスマイナス
     if text == "±":
@@ -145,7 +158,7 @@ def handle_input(text: str, screen, state):
         return
     
     if text == ")":
-        if current.count("(") > current.count(")") and current[-1] != "(":
+        if miss_parenthesis and current[-1] != "(":
             screen.set(current + text)
         state.just_evaluated = False
         return
@@ -165,16 +178,11 @@ def handle_input(text: str, screen, state):
         state.just_evaluated = False
         return
     
-    # 演算子(べき乗の処理も)
-    if text in ALLOWED_OPERATORS:
+    # 演算子
+    if text in "+-*/%.^":
         if len(current) == 0:
             return
-        if current[-2:] == "**":
-            return
-        if current[-1] == "*" and text == "*":
-            screen.set(current + text)
-            return
-        if current[-1] in ALLOWED_OPERATORS:
+        if current[-1] in "+-*/%.^":
             screen.set(current[:-1] + text)
         else:
             screen.set(current + text)
