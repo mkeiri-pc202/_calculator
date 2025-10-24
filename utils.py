@@ -1,10 +1,11 @@
-""" 結果が整数か小数か判断して、表示形式を変える関数
+""" 結果が整数か小数か判断して、表示形式を変える
 - 結果の表示が統一されていなかったので、結果が整数の場合はint、小数の場合はfloatにして文字列に返す
 """
 
 from sympy import sympify
+from calc import *
 
-def format_result(expr: str) -> str:
+def format_result(expr: str) -> int | str:
     """数式を評価して、整数なら整数、小数なら小数として文字列で返す関数
 
     :param expr: 入力した数式
@@ -13,18 +14,21 @@ def format_result(expr: str) -> str:
     :rtype: str
     """
     # sympify関数を利用して入力した式(expr)を取り込み、resultに代入
-    result = sympify(expr)
+    # result = sympify(expr)
+    result, 文字result = cal(expr)
     # 成功
-    try:
-        # 結果を浮動小数点型にしてnumに代入
-        num = float(result)
-        # is_integer()メソッドで整数か小数か判定
-        if num.is_integer():
-            # True(整数)の場合は整数型にして文字列で返す
-            return str(int(num))
-        else:
-            # False(小数)の場合はそのまま浮動小数点型で文字列で返す
-            return str(num)
-    # 例外はエラーで返す
-    except Exception:
-        return "エラー"
+    return 文字result
+
+    # try:
+    #     # 結果を浮動小数点型にしてnumに代入
+    #     num = float(result)
+    #     # is_integer()メソッドで整数か小数か判定
+    #     if num.is_integer():
+    #         # True(整数)の場合は整数型にして文字列で返す
+    #         return str(int(num))
+    #     else:
+    #         # False(小数)の場合はそのまま浮動小数点型で文字列で返す
+    #         return str(num)
+    # # 例外はエラーで返す
+    # except Exception:
+    #     return "エラー"
