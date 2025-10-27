@@ -174,7 +174,7 @@ def handle_input(text: str, screen, state):
         return
     
     if text == ")":
-        if miss_parenthesis and current[-1] != "(":
+        if miss_parenthesis != 0 and current[-1] != "(":
             screen.set(current + text)
         state.just_evaluated = False
         return
