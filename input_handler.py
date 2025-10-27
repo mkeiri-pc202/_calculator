@@ -63,16 +63,15 @@ def handle_input(text: str, screen, state):
     if text == "=":
         if current[-1] in ALLOWED_OPERATORS:
             return
-
-        try:
-            if miss_parenthesis > 0:
-                current += miss_parenthesis * ")"
-            result = format_result(current)
-            screen.set(result)
-        except Exception as e:
-            screen.set("エラー")
-            print(e)
-
+        else:
+            try:
+                if miss_parenthesis > 0:
+                    current += miss_parenthesis * ")"
+                result = format_result(current)
+                screen.set(result)
+            except Exception as e:
+                screen.set("エラー")
+                print(e)
         state.just_evaluated = True
         return
             
@@ -101,7 +100,8 @@ def handle_input(text: str, screen, state):
         else:
             screen.set(current + text)
         state.just_evaluated = False
-        return        
+        return
+
     
     # プラスマイナス
     if text == "±":
@@ -178,7 +178,7 @@ def handle_input(text: str, screen, state):
     if text == "(":
         if len(current) == 0:
             screen.set(text)
-        elif current[-1] in "1234567890":
+        elif current[-1] in "1234567890E":
             screen.set(current + "*" + text)
         else:    
             screen.set(current + text)
@@ -187,6 +187,17 @@ def handle_input(text: str, screen, state):
     
     if text == ")":
         if miss_parenthesis != 0 and current[-1] != "(":
+            screen.set(current + text)
+        state.just_evaluated = False
+        return
+    
+    # # 指数(E)
+    if text == "E":
+        if state.just_evaluated or len(current) == 0:
+            return
+        if current[-1] in ALLOWED_OPERATORS:
+            screen.set(current[:-1] + text)
+        else:
             screen.set(current + text)
         state.just_evaluated = False
         return
@@ -206,9 +217,17 @@ def handle_input(text: str, screen, state):
         state.just_evaluated = False
         return
     
+    # 指数表記後の演算子入力(加算か減算のみ入力可)
+    if text in "+-":
+        if current[-1] == "E":
+            screen.set(current + text)
+        state.just_evaluated = False
+        return
+
+
     # 演算子
     if text in "+-*/%.^":
-        if len(current) == 0:
+        if state.just_evaluated or len(current) == 0:
             return
         if current[-1] in "+-*/%.^":
             screen.set(current[:-1] + text)
