@@ -5,10 +5,11 @@ TKinterを使用して電卓のインターフェースを作成、
 tkinterのインポート、functoolsモジュールのpartial関数
 input_handler`モジュールの handle_input関数とCalculatorStateクラスを利用
 
-主な機能:
-- ボタン入力の処理
-- キーボード入力の処理
-- 数式の表示と評価
+import:
+    tkinter(標準ライブラリ): 電卓のインターフェースを作成するGUIライブラリ
+    functools.partial(標準ライブラリ): 関数の一部の引数を固定した新たな関数を作成する
+    handle_input(from input_handler): 入力に応じて数式を構築・評価する関数
+    CalulatorState(from input_handler): 計算の状態(イコールしたかどうか)を保持するクラス
 """
 
 import tkinter as tk

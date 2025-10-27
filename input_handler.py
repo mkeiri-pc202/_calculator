@@ -1,3 +1,14 @@
+"""電卓の入力処理を行うモジュール
+CalculatorStateクラスで計算の実行状況をフラグで表示
+handle_input関数で電卓の入力に応じて処理、画面に表示
+数字以外の特殊入力(クリア、イコール、パーセント、ルート、括弧、プラスマイナス)にも対応
+
+import:
+    format_result(from utils): 計算結果を整形して表示用に変換
+    ALLOWED_OPERATORS(from utils): 入力を許可している演算子のリスト
+    re(標準ライブラリ): パーセントの正規表現マッチングに使用
+"""
+
 from utils import format_result
 from utils import ALLOWED_OPERATORS
 import re
@@ -20,8 +31,7 @@ class CalculatorState:
 def handle_input(text: str, screen, state):
     """電卓の入力を処理し、画面に反映
 
-    ボタンやキーボードからの各種入力に応じて数式を構築・評価
-    結果を画面に表示する。
+    入力に応じて数式を構築・評価、結果を画面に表示する。
     特殊な入力(クリア、イコール、パーセント、ルート、括弧、プラスマイナス)にも対応
 
     Args:
@@ -98,18 +108,21 @@ def handle_input(text: str, screen, state):
         # 入力した文字がなし、もしくは最後の文字列が演算子 + ( の場合は入力できない
         if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
             return
-        # 文字列の最後が")"かつ文字列を右から検索して"("が右端になく、かつ文字列を右端から検索して
+        # 文字列の最後が")"かつ文字列を右から検索して"("が右端になく、かつ文字列を右端から検索して"("の左隣に"-"がある場合(=負数)
         if current[-1] == ")" and current.rfind("(") != -1 and current[current.rfind("(") + 1] == '-':
+            # rfind("(")で最後の"()"を検索、数値を抽出して反転
             last_parentheses_index = current.rfind("(")
             target = current[last_parentheses_index:]
             cleaned = target.replace("(", "").replace(")", "")
             result = str(int(cleaned) * -1)
             screen.set(current[:last_parentheses_index] + result)
             return
-        last_op_index = max((current.rfind(op) for op in ALLOWED_OPERATORS))
-        target = current if last_op_index == -1 else current[last_op_index + 1:]
-        new_text = f"(-{target})"
-        screen.set(current[:last_op_index + 1] + new_text)
+        # 正数の場合
+        else:
+            last_op_index = max((current.rfind(op) for op in ALLOWED_OPERATORS))
+            target = current if last_op_index == -1 else current[last_op_index + 1:]
+            new_text = f"(-{target})"
+            screen.set(current[:last_op_index + 1] + new_text)
         return
 
     # # プラスマイナス(正規表現で判定)
