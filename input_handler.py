@@ -84,13 +84,10 @@ def handle_input(text: str, screen, state):
     
     # ルート
     if text == "√":
-        if state.just_evaluated:
+        if state.just_evaluated or current == "0":
             screen.set(text)
         else:
-            if current == "0":
-                screen.set(text)
-            else:
-                screen.set(current + text)
+            screen.set(current + text)
         state.just_evaluated = False
         return        
     
@@ -195,10 +192,10 @@ def handle_input(text: str, screen, state):
         return
     
     # 演算子
-    if text in "+-*/%.^":
+    if text in ALLOWED_OPERATORS:
         if len(current) == 0:
             return
-        if current[-1] in "+-*/%.^":
+        if current[-1] in ALLOWED_OPERATORS:
             screen.set(current[:-1] + text)
         else:
             screen.set(current + text)
