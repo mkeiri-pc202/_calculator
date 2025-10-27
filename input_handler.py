@@ -4,16 +4,32 @@ import re
 
 
 class CalculatorState:
-    """電卓の状態を保持するクラス
+    """計算の状態を保持するクラス
 
     Attributes:
-
+        just_evaluated (bool): 直前に計算が実行されたか(イコールを実行)示すフラグ
     """
     def __init__(self):
+        """CalculatorStateの初期化
+
+        self.just_evaluatedをFalseに設定
+        """
         self.just_evaluated = False
 
 
 def handle_input(text: str, screen, state):
+    """電卓の入力を処理し、画面に反映
+
+    ボタンやキーボードからの各種入力に応じて数式を構築・評価
+    結果を画面に表示する。
+    特殊な入力(クリア、イコール、パーセント、ルート、括弧、プラスマイナス)にも対応
+
+    Args:
+        text (str): 入力された文字
+        screen (tk.StringVar): Tkinterの表示用変数。数式や結果を表示
+        state (CalculatorState): 電卓の状態管理オブジェクト。直前の計算実行状態を保持
+    """
+
     current = screen.get()
     miss_parenthesis = current.count("(") - current.count(")")
 
@@ -83,7 +99,7 @@ def handle_input(text: str, screen, state):
         # 入力した文字がなし、もしくは最後の文字列が演算子 + ( の場合は入力できない
         if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
             return
-        # 文字列の最後が)かつ文字列を右から検索して(が右端になく、かつ文字列を右端から検索して
+        # 文字列の最後が")"かつ文字列を右から検索して"("が右端になく、かつ文字列を右端から検索して
         if current[-1] == ")" and current.rfind("(") != -1 and current[current.rfind("(") + 1] == '-':
             last_parentheses_index = current.rfind("(")
             target = current[last_parentheses_index:]
@@ -188,14 +204,3 @@ def handle_input(text: str, screen, state):
             screen.set(current + text)
         state.just_evaluated = False
         return
-
-    # # 計算後の数字の追記を防ぐ処理
-    # if state.just_evaluated:
-    #     if text in ALLOWED_OPERATORS:
-    #         screen.set(current + text)
-    #     else:
-    #         screen.set(text)
-    #     state.just_evaluated = False
-    # else:
-    #     screen.set(current + text)
-    #     return

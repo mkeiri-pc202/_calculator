@@ -1,4 +1,15 @@
-"""電卓のGUIの設定と実行"""
+"""電卓のGUIの設定と実行をするモジュール
+
+TKinterを使用して電卓のインターフェースを作成、
+ボタンやキーボード入力に応じて数式を処理。
+tkinterのインポート、functoolsモジュールのpartial関数
+input_handler`モジュールの handle_input関数とCalculatorStateクラスを利用
+
+主な機能:
+- ボタン入力の処理
+- キーボード入力の処理
+- 数式の表示と評価
+"""
 
 import tkinter as tk
 from input_handler import handle_input, CalculatorState
@@ -13,12 +24,30 @@ entry.grid(row=0, column=0, columnspan=5)
 
 state = CalculatorState()
 
-# ラッパー関数の定義
 def handle_click(event):
+    """(画面上の)ボタンをクリックされたときに入力を処理する
+
+    イベントオブジェクトからボタンのテキストを取得、
+    handle_input関数を呼び出し、入力を処理
+
+    Args:
+        event (tkinter.Event): ボタンのクリックイベント
+    """
     text = event.widget.cget("text") 
     handle_input(text, screen, state)
 
 def handle_key(event, screen, state):
+    """キーボード入力を処理
+
+    入力されたキーが許可された文字(allowed_chars)であれば、handle_input関数を呼び出し処理
+    Enterキーで計算実行(イコール)、Backspaceキーで一文字削除してstate.just_evaluatedをFalseにする
+    それ以外のキーはNoneを返す
+
+    Args:
+        event (tkinter.Event): キーボードイベント(入力)
+        screen (tkinter.StringVar): 表示用の文字列変数
+        state (CalculatorState): 電卓の状態管理オブジェクト
+    """
     key = event.char
     allowed_chars = "0123456789+-*/().%^√"
     
@@ -32,9 +61,10 @@ def handle_key(event, screen, state):
     else:
         return
 
-# partialで引数を固定した関数を作成
+# partialでhandle_key関数に引数(screen, state)を固定
 bound_handle_key = partial(handle_key, screen=screen, state=state)
 
+# bindメソッドでキー操作によってbound_handle_keyを呼び出す
 root.bind("<Key>", bound_handle_key)
 
 # ボタンの設定 (右上は空きボタン)
