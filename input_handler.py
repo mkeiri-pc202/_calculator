@@ -62,7 +62,6 @@ def after_E_operator(text: str) -> bool:
     """
     return len(text) >= 2 and text[-2] == "E" and text[-1] in "+-" 
 
-
 def handle_input(text: str, screen, state):
     """電卓の入力を処理し、画面に反映
 
@@ -150,7 +149,7 @@ def handle_input(text: str, screen, state):
             last_parentheses_index = current.rfind("(")
             target = current[last_parentheses_index:]
             cleaned = target.replace("(", "").replace(")", "")
-            result = str(int(cleaned) * -1)
+            result = str(float(cleaned) * -1)
             screen.set(current[:last_parentheses_index] + result)
             return
         # 正数の場合
