@@ -27,6 +27,17 @@ class CalculatorState:
         """
         self.just_evaluated = False
 
+def reset_evaluated(state: CalculatorState):
+    """計算の状態をリセット
+    
+    関数化して新たに入力が始まる場面にはreset_evaluated(state)を配置
+    必要箇所にはstate.just_evaluated = Trueを配置
+
+    Args:
+        state (CalculatorState): 計算状況を保持するオブジェクト。計算直後のフラグをリセットする
+    """
+    state.just_evaluated = False
+
 def after_E(text: str) -> bool:
     """指数表記(E)の入力判定
 
@@ -80,7 +91,7 @@ def handle_input(text: str, screen, state):
     # クリア
     if text.lower() == "c":
         screen.set("")
-        state.just_evaluated = False
+        reset_evaluated(state)
         return
     
     # イコール
@@ -124,7 +135,7 @@ def handle_input(text: str, screen, state):
             return
         else:
             screen.set(current + text)
-        state.just_evaluated = False
+        reset_evaluated(state)
         return
 
     
@@ -158,20 +169,20 @@ def handle_input(text: str, screen, state):
             screen.set(current + "*" + text)
         else:    
             screen.set(current + text)
-        state.just_evaluated = False
+        reset_evaluated(state)
         return
     
     if text == ")":
         if miss_parenthesis != 0 and current[-1] != "(":
             screen.set(current + text)
-        state.just_evaluated = False
         return
 
     # 指数表記(E)
     if text == "E":
         if current and current[-1].isdigit():
             screen.set(current + text)
-            state.just_evaluated = False
+        reset_evaluated(state)
+        return
 
     # 指数(E)の後、数字か"+","-"のみ入力可
     if after_E(current):
@@ -198,7 +209,7 @@ def handle_input(text: str, screen, state):
                 screen.set(current + "*" + text)
             else:
                 screen.set(current + text)
-        state.just_evaluated = False
+        reset_evaluated(state)
         return     
     
     # 演算子
@@ -209,5 +220,5 @@ def handle_input(text: str, screen, state):
             screen.set(current[:-1] + text)
         else:
             screen.set(current + text)
-        state.just_evaluated = False
+        reset_evaluated(state)
         return
