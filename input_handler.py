@@ -27,30 +27,6 @@ class CalculatorState:
         """
         self.just_evaluated = False
 
-def after_E(text: str) -> bool:
-    """指数表記(E)の入力判定
-
-    文字列の最後の文字がEであるかを判断する
-
-    Args:
-        text (str): 判定対象の文字列
-
-    Returns:
-        bool: 最後の文字がEであればTrue、それ以外はFalse
-    """
-    return text.endswith("E")
-
-def after_E_operator(text: str) -> bool:
-    """文字列がEに続き、'+'か'-'で終わっているか判定
-
-    Args:
-        text (str): 判定対象の文字列
-
-    Returns:
-        bool: 最後の文字列がE+かE-であればTrue、それ以外はFalse
-    """
-    return len(text) >= 2 and text[-2] == "E" and text[-1] in "+-" 
-
 
 def handle_input(text: str, screen, state):
     """電卓の入力を処理し、画面に反映
@@ -166,27 +142,34 @@ def handle_input(text: str, screen, state):
             screen.set(current + text)
         state.just_evaluated = False
         return
-
-    # 指数表記(E)
+    
+    # # 指数(E)
     if text == "E":
-        if current and current[-1].isdigit():
+        if len(current) == 0:
+            return
+        else:
             screen.set(current + text)
-            state.just_evaluated = False
-
-    # 指数(E)の後、数字か"+","-"のみ入力可
-    if after_E(current):
-        if text in "+-" or text.isdigit():
-            screen.set(current + text)
+        state.just_evaluated = False
         return
     
-    # E+もしくはE-の後、数字の追加入力か"+","-"の置き換え入力可("+","-"以外の演算子の入力不可)
-    if after_E_operator(current):
-        if text.isdigit():
+    # 指数表記後の演算子入力(加算か減算のみ入力可)
+    if current and current[-1] == "E":
+        if text in "*/%.^E": 
+            return
+        else:
             screen.set(current + text)
-        elif text in "+-":
-            screen.set(current[:-1] + text)
+        state.just_evaluated = False
         return
-
+    if  len(current) >= 2 and current[-2] == "E" and current[-1] in "+-":
+        if text in "+-":
+            screen.set(current[:-1] + text)
+        elif text in "+-*/%.^E":
+            return
+        else:
+            screen.set(current + text)
+        state.just_evaluated = False
+        return
+    
     # 数字
     if text.isdigit():
         if state.just_evaluated:
