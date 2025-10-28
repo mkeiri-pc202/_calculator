@@ -1,7 +1,7 @@
 """電卓の入力処理を行うモジュール
 CalculatorStateクラスで計算の実行状況をフラグで表示
 handle_input関数で電卓の入力に応じて処理、画面に表示
-数字以外の特殊入力(クリア、イコール、パーセント、ルート、括弧、プラスマイナス)にも対応
+数字以外の特殊入力(クリア、イコール、パーセント、ルート、括弧、プラスマイナス、指数表記)にも対応
 
 import:
     format_result(from utils): 計算結果を整形して表示用に変換
@@ -32,7 +32,7 @@ def handle_input(text: str, screen, state):
     """電卓の入力を処理し、画面に反映
 
     入力に応じて数式を構築・評価、結果を画面に表示する。
-    特殊な入力(クリア、イコール、パーセント、ルート、括弧、プラスマイナス)にも対応
+    特殊な入力(クリア、イコール、パーセント、ルート、括弧、プラスマイナス、指数表記)にも対応
 
     Args:
         text (str): 入力された文字
@@ -61,7 +61,7 @@ def handle_input(text: str, screen, state):
     
     # イコール
     if text == "=":
-        if current[-1] in ALLOWED_OPERATORS:
+        if current and current[-1] in ALLOWED_OPERATORS:
             return
         else:
             try:
@@ -89,13 +89,14 @@ def handle_input(text: str, screen, state):
         except Exception as e:
             screen.set("エラー")
             print(e)
+        state.just_evaluated = True
         return
     
     # ルート
     if text == "√":
         if state.just_evaluated or current == "0":
             screen.set(text)
-        elif current[-2:] == "√√":
+        elif len(current) >= 2 and current[-2:] == "√√":
             return
         else:
             screen.set(current + text)
@@ -125,55 +126,6 @@ def handle_input(text: str, screen, state):
             screen.set(current[:last_op_index + 1] + new_text)
         return
 
-    # # プラスマイナス(正規表現で判定)
-    # if text == "±":
-    #     if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
-    #         return
-        
-    #     # 通常時のマイナス付け替え
-    #     match = re.match(r'^-?\d+(\.\d+)?$', current)
-    #     if match:
-    #         num = current
-    #         if current.startswith("-"):
-    #             new_num = num[1:]
-    #         else:
-    #             new_num = "-" + num
-    #         screen.set(new_num)
-    #         state.just_evaluated = False
-    #         return
-        
-    #     # 演算子直後の数字のマイナス付け替え
-    #     match = re.search(r'([+\-*/(])(-?\d+(\.\d+)?)(?!.*[+\-*/(])', current)
-    #     if match:
-    #         num_start = match.start(2)
-    #         num = match.group(2)
-
-    #         if num.startswith("-"):
-    #             new_num = num[1:]
-    #         else:
-    #             new_num = "-" + num
-
-    #         new_expr = current[:num_start] + new_num + current[num_start + len(num):]
-    #         screen.set(new_expr)
-    #         state.just_evaluated = False
-    #         return
-
-    #     # ()内の数字のマイナス付け替え
-    #     match = re.search(r'\((\-?\d+(\.\d+)?)\)(?!.*\()', current)
-    #     if match:
-    #         full = match.group(0)
-    #         num = match.group(1)
-
-    #         if num.startswith("-"):
-    #             new = "(" + num[1:] + ")"
-    #         else:
-    #             new = "(-" + num + ")"
-
-    #         new_expr = current[:match.start()] + new + current[match.end():]
-    #         screen.set(new_expr)
-    #         state.just_evaluated = False
-    #         return
-
     # 括弧
     if text == "(":
         if len(current) == 0:
@@ -193,10 +145,26 @@ def handle_input(text: str, screen, state):
     
     # # 指数(E)
     if text == "E":
-        if state.just_evaluated or len(current) == 0:
+        if len(current) == 0:
             return
-        if current[-1] in ALLOWED_OPERATORS:
+        else:
+            screen.set(current + text)
+        state.just_evaluated = False
+        return
+    
+    # 指数表記後の演算子入力(加算か減算のみ入力可)
+    if current and current[-1] == "E":
+        if text in "*/%.^E": 
+            return
+        else:
+            screen.set(current + text)
+        state.just_evaluated = False
+        return
+    if  len(current) >= 2 and current[-2] == "E" and current[-1] in "+-":
+        if text in "+-":
             screen.set(current[:-1] + text)
+        elif text in "+-*/%.^E":
+            return
         else:
             screen.set(current + text)
         state.just_evaluated = False
@@ -206,7 +174,6 @@ def handle_input(text: str, screen, state):
     if text.isdigit():
         if state.just_evaluated:
             screen.set(text)
-            state.just_evaluated = False
         else:
             if current == "0" or (len(current) >= 2 and current[-1] == "0" and current[-2] in "+-/*"):
                 screen.set(current[:-1] + text)
@@ -215,20 +182,11 @@ def handle_input(text: str, screen, state):
             else:
                 screen.set(current + text)
         state.just_evaluated = False
-        return
+        return     
     
-    # # 指数表記後の演算子入力(加算か減算のみ入力可)
-    # if text in "+-":
-    #     if current[-1] == "E":
-    #         screen.set(current + text)
-        
-    #     state.just_evaluated = False
-    #     return
-
-
     # 演算子
     if text in "+-*/%.^":
-        if state.just_evaluated or len(current) == 0:
+        if len(current) == 0:
             return
         if current[-1] in "+-*/%.^":
             screen.set(current[:-1] + text)
