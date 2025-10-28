@@ -217,12 +217,13 @@ def handle_input(text: str, screen, state):
         state.just_evaluated = False
         return
     
-    # 指数表記後の演算子入力(加算か減算のみ入力可)
-    if text in "+-":
-        if current[-1] == "E":
-            screen.set(current + text)
-        state.just_evaluated = False
-        return
+    # # 指数表記後の演算子入力(加算か減算のみ入力可)
+    # if text in "+-":
+    #     if current[-1] == "E":
+    #         screen.set(current + text)
+        
+    #     state.just_evaluated = False
+    #     return
 
 
     # 演算子
