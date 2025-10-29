@@ -119,7 +119,7 @@ def handle_input(text: str, screen, state):
                 screen.set(new_expr)
                 state.just_evaluated = True
             else:
-                screen.set("エラー")
+                return
         except Exception as e:
             screen.set("エラー")
             print(e)
