@@ -7,7 +7,6 @@ import:
     全体計算(from keisan): 与えられた数式を評価し、結果を返す関数   
 """
 
-# from sympy import sympify
 from keisan import 全体計算
 
 ALLOWED_OPERATORS = "+-*/%.^√E"
@@ -24,8 +23,8 @@ def format_result(expr: str) -> str:
     Returns:
         str: 評価結果の文字列。例外が発生したら"エラー"を返す
     """
-    result = 全体計算(expr)
     try:
+        result = 全体計算(expr)
         num = float(result)
         if num.is_integer():
             return str(int(num))
@@ -33,24 +32,3 @@ def format_result(expr: str) -> str:
             return str(num)
     except Exception:
         return "エラー"
-
-
-
-# sympify利用の関数
-# def format_result(expr: str) -> str:
-#     """数式を評価して、整数なら整数、小数なら小数として文字列で返す関数
-
-#     :param expr: 入力した数式
-#     :type expr: str
-#     :return: 評価結果を文字列で返す。例)5の場合は整数、2.5は小数、評価に失敗した場合はエラー
-#     :rtype: str
-#     """
-    # result = sympify(expr)
-    # try:
-    #     num = float(result)
-    #     if num.is_integer():
-    #         return str(int(num))
-    #     else:
-    #         return str(num)
-    # except Exception as e:
-    #     return "エラー"
