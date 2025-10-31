@@ -84,7 +84,7 @@ def handle_input(text: str, screen, state):
         text = "/"
 
     # 19文字以上だったらクリア以外入力できない
-    if len(current) >=19 and text not in ("c","C"):
+    if len(current) >=18 and text not in ("c","C"):
         return
 
     # クリア
