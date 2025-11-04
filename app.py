@@ -13,6 +13,7 @@ import:
 """
 
 import tkinter as tk
+from utils import ALLOWED_OPERATORS
 from input_handler import handle_input, CalculatorState
 from functools import partial
 
@@ -41,7 +42,9 @@ def handle_key(event, screen, state):
     """キーボード入力を処理
 
     入力されたキーが許可された文字(allowed_chars)であれば、handle_input関数を呼び出し処理
-    Enterキーで計算実行(イコール)、Backspaceキーで一文字削除してstate.just_evaluatedをFalseにする
+    Enterキーで計算実行(イコール)
+    Backspaceキーでscreenの末尾が数字の場合、一文字削除してstate.just_evaluatedをFalseにする
+    screenの末尾が演算子の場合はreturn
     それ以外のキーはNoneを返す
 
     Args:
@@ -50,14 +53,17 @@ def handle_key(event, screen, state):
         state (CalculatorState): 電卓の状態管理オブジェクト
     """
     key = event.char
-    allowed_chars = "0123456789+-*/().%^√"
+    allowed_chars = "0123456789+-*/().%^√±E"
     
     if event.keysym == "Return":
         handle_input("=", screen, state)
     elif event.keysym == "BackSpace":
-        screen.set(screen.get()[:-1])
-        state.just_evaluated = False
-    elif key in allowed_chars:
+        if screen.get()[-1] in ALLOWED_OPERATORS:
+            return
+        else:
+            screen.set(screen.get()[:-1])
+            state.just_evaluated = False
+    elif key and key in allowed_chars:
         handle_input(key, screen, state)
     else:
         return
@@ -68,7 +74,7 @@ bound_handle_key = partial(handle_key, screen=screen, state=state)
 # bindメソッドでキー操作によってbound_handle_keyを呼び出す
 root.bind("<Key>", bound_handle_key)
 
-# ボタンの設定 (右上は空きボタン)
+# ボタンの設定
 buttons = [
     "√", "±", "^", "E",
     "(", ")", "%", "C",

@@ -3,7 +3,6 @@
 monkeypatchを使用して全体計算()をモック化
 format_result()を呼び出してもモックの返り値が返るようにして
 期待する出力が得られるかを確認
-
 """
 
 import pytest
