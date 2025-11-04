@@ -1,7 +1,8 @@
 # 電卓プログラム テスト仕様書
 
-バージョン: 1.0  
-作成日: [2025/10/24]  
+バージョン: 1.1 
+最終更新日: [2025/11/04]
+作成日: [2025/10/24] 
 作成者: [作成者名 / 松本経理ビジネス専門学校 Team A ]  
 リポジトリ: [mkeiri-pc202/_calculator](https://github.com/mkeiri-pc202/_calculator)
 
@@ -24,8 +25,17 @@
 
 ## 3.テスト項目一覧
 ### 3.1 単体テスト一覧
+- 対象ファイル:app.py テストファイル:test_app.py
+![alt text](image-1.png)
+
+- 対象ファイル:input_handler.py テストファイル:test_input_handler.py
+![alt text](image-2.png)
+
+- 対象ファイル:計算.py 
+
+- 対象ファイル:utils.py テストファイル:test_utils.py
+![alt text](image-3.png)
 
 ### 3.2 統合テスト一覧
-(フローが単純で単体テストで網羅できてしまうため省略)
 
 ### 3.3 総合テスト一覧
