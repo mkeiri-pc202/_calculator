@@ -18,7 +18,7 @@
 - Python: 3.13.9
 - エディタ: Visual Studio Code 1.105.1
 - テストフレームワーク: pytest
-- 実行方法: ターミナルにて `pytest tests/` を実行
+- 実行方法: ターミナルにて pytest を実行
 - 依存ライブラリ:
 - バージョン管理: Github
 - 実行端末: CPU: AMD Athlon Silver 3050U with Radeon Graphics(2.30 GHz) RAM: 8.0GB
@@ -31,7 +31,7 @@
 - 対象ファイル:input_handler.py テストファイル:test_input_handler.py
 ![alt text](image-2.png)
 
-- 対象ファイル:計算.py 
+- 対象ファイル:keisan.py 
 
 - 対象ファイル:utils.py テストファイル:test_utils.py
 ![alt text](image-3.png)
