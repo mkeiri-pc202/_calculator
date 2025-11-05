@@ -1,3 +1,9 @@
+<style>
+table, th, td {
+    font-size: 50%;
+}
+</style>
+
 # 電卓プログラム テスト仕様書
 
 バージョン: 1.1 
