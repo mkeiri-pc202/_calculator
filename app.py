@@ -68,10 +68,11 @@ def handle_key(event, screen, state):
     else:
         return
 
-# partialでhandle_key関数に引数(screen, state)を固定
+# partialで引数(screen, state)を固定
+# bindは引数１つしか渡せないため、２つ引数を固定することで受け取れるようにして、handle_keyを呼び出し
 bound_handle_key = partial(handle_key, screen=screen, state=state)
 
-# bindメソッドでキー操作によってbound_handle_keyを呼び出す
+# Tkinterのbind関数でroot ウィンドウに対して、キーイベント<key>によってbound_handle_keyを呼び出す
 root.bind("<Key>", bound_handle_key)
 
 # ボタンの設定
