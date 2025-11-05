@@ -58,20 +58,18 @@ def handle_key(event, screen, state):
     if event.keysym == "Return":
         handle_input("=", screen, state)
     elif event.keysym == "BackSpace":
-        if screen.get()[-1] in ALLOWED_OPERATORS:
-            return
-        else:
-            screen.set(screen.get()[:-1])
-            state.just_evaluated = False
+        screen.set(screen.get()[:-1])
+        state.just_evaluated = False
     elif key and key in allowed_chars:
         handle_input(key, screen, state)
     else:
         return
 
-# partialでhandle_key関数に引数(screen, state)を固定
+# partialで引数(screen, state)を固定(カリー化)
+# bindは引数１つしか渡せないため、２つ引数を固定することで受け取れるようにして、handle_keyを呼び出し
 bound_handle_key = partial(handle_key, screen=screen, state=state)
 
-# bindメソッドでキー操作によってbound_handle_keyを呼び出す
+# Tkinterのbind関数でroot ウィンドウに対して、キーイベント<key>によってbound_handle_keyを呼び出す
 root.bind("<Key>", bound_handle_key)
 
 # ボタンの設定
