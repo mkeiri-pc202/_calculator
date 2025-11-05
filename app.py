@@ -58,17 +58,14 @@ def handle_key(event, screen, state):
     if event.keysym == "Return":
         handle_input("=", screen, state)
     elif event.keysym == "BackSpace":
-        if screen.get()[-1] in ALLOWED_OPERATORS:
-            return
-        else:
-            screen.set(screen.get()[:-1])
-            state.just_evaluated = False
+        screen.set(screen.get()[:-1])
+        state.just_evaluated = False
     elif key and key in allowed_chars:
         handle_input(key, screen, state)
     else:
         return
 
-# partialで引数(screen, state)を固定
+# partialで引数(screen, state)を固定(カリー化)
 # bindは引数１つしか渡せないため、２つ引数を固定することで受け取れるようにして、handle_keyを呼び出し
 bound_handle_key = partial(handle_key, screen=screen, state=state)
 
