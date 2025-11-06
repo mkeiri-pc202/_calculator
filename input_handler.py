@@ -237,5 +237,3 @@ def handle_input(text: str, screen, state):
             screen.set(current + text)
         reset_evaluated(state)
         return
-    
-
