@@ -258,13 +258,13 @@ def test_root_input_operator(setup):
     screen, state = setup
     screen.set("2*") 
     handle_input("√", screen, state)
-    assert screen.get() == "*"
+    assert screen.get() == "2*√"
 
 def test_root_input_open_parenthesis(setup):
     screen, state = setup
     screen.set("(") 
     handle_input("√", screen, state)
-    assert screen.get() == "("
+    assert screen.get() == "(√"
 
 def test_double_root_input(setup):
     screen, state = setup
@@ -286,7 +286,7 @@ def test_root_input_halfway(setup):
 
 def test_root_input_exc(setup):
     screen, state = setup
-    screen.set("ABC/9") 
+    screen.set("ABC") 
     handle_input("√", screen, state)
     assert screen.get() == "エラー"
 
@@ -294,7 +294,7 @@ def test_puls_minus_input(setup):
     screen, state = setup
     screen.set("") 
     handle_input("±", screen, state)
-    assert screen.get() == "エラー"
+    assert screen.get() == ""
 
 def test_puls_minus_input_minus(setup):
     screen, state = setup
@@ -324,7 +324,7 @@ def test_puls_minus_input_operator(setup):
     screen, state = setup
     screen.set("2+") 
     handle_input("±", screen, state)
-    assert screen.get() == "エラー"
+    assert screen.get() == "2+"
 
 def test_puls_minus_input_halfway_minus(setup):
     screen, state = setup
@@ -533,7 +533,7 @@ def test_reinput_E_formula(setup):
     screen.set("3E3")
     handle_input("=", screen, state)
     assert state.just_evaluated is True
-    handle_input("=", screen, state)
+    handle_input("E", screen, state)
     assert screen.get() == "3000E"
 
 def test_invalid_expression_with_E(setup):

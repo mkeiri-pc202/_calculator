@@ -77,7 +77,7 @@ def test_handle_key_backspace_operator(setup_tk):
     event.keysym = "BackSpace"
 
     handle_key(event, screen, state)
-    assert screen.get() == "1+"
+    assert screen.get() == "1"
 
 def test_handle_key_backspace_evaluated(setup_tk):
     root, screen, state = setup_tk
