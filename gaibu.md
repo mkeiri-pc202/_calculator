@@ -1,0 +1,14 @@
+```mermaid
+sequenceDiagram
+    participant ユーザー
+    participant GUI(app.py)
+    participant 入力処理(input_handler.py)
+    participant 計算処理(keisan.py)
+    participant 結果判定(utils.py)
+    ユーザー->>GUI(app.py):入力(ボタン/キー)
+    GUI(app.py)->>入力処理(input_handler.py):handle_input呼び出し
+    入力処理(input_handler.py)->>計算処理(keisan.py):数式補正・字句解析
+    計算処理(keisan.py)->>結果判定(utils.py):全体計算実行
+    結果判定(utils.py)->>GUI(app.py):判定処理済み計算結果返却
+    GUI(app.py)->>ユーザー:画面に結果表示
+```
