@@ -5,7 +5,6 @@ handle_input関数で電卓の入力に応じて処理、画面に表示
 
 import:
     format_result(from utils): 計算結果を整形して表示用に変換
-    ALLOWED_CHARS(from utils): 入力を許可している文字
     ALLOWED_OPERATORS(from utils): 入力を許可している演算子
     re(標準ライブラリ): 正規表現マッチングに使用
 """
@@ -112,19 +111,22 @@ def handle_input(text: str, screen, state):
             
     # パーセント
     if text == "%":
-        try:
-            match = re.search(r'(\d+(\.\d+)?)%?$', current)
+        # 正規表現で括弧付きの数字をマッチング
+        match = re.search(r'\((\-?\d+(\.\d+)?)\)$', current)
+        if match:
+            value = float(match.group(1)) / 100
+            # 括弧内の数値を変換
+            new_current = re.sub(r'\((\-?\d+(\.\d+)?)\)$', f"({value})", current)
+            screen.set(new_current)
+            state.just_evaluated = True
+        else:
+            # 括弧で囲まれていない場合は通常の変換処理
+            match = re.search(r'(\d+(\.\d+)?)$', current)
             if match:
                 value = float(match.group(1)) / 100
-                new_expr = re.sub(r'(\d+(\.\d+)?)%?$', str(value), current)
-                screen.set(new_expr)
+                new_current = re.sub(r'(\d+(\.\d+)?)$', str(value), current)
+                screen.set(new_current)
                 state.just_evaluated = True
-            else:
-                return
-        except Exception as e:
-            screen.set("エラー")
-            print(e)
-        state.just_evaluated = True
         return
     
     # ルート
@@ -137,30 +139,6 @@ def handle_input(text: str, screen, state):
             screen.set(current + text)
         reset_evaluated(state)
         return
-
-    
-    # # プラスマイナス
-    # if text == "±":
-    #     # 入力した文字がなし、もしくは最後の文字列が演算子 + ( の場合は何もしない
-    #     if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
-    #         return
-        
-    #     # 文字列の最後が")"かつ文字列を右から検索して"("が右端になく、かつ文字列を右端から検索して"("の左隣に"-"がある場合(=負数)
-    #     if current[-1] == ")" and current.rfind("(") != -1 and current[current.rfind("(") + 1] == '-':
-    #         # rfind("(")で最後の"()"を検索、数値を抽出して反転
-    #         last_parentheses_index = current.rfind("(")
-    #         target = current[last_parentheses_index:]
-    #         cleaned = target.replace("(", "").replace(")", "")
-    #         result = str(int(cleaned) * -1)
-    #         screen.set(current[:last_parentheses_index] + result)
-    #         return
-    #     # 正数の場合
-    #     else:
-    #         last_op_index = max((current.rfind(op) for op in ALLOWED_OPERATORS))
-    #         target = current if last_op_index == -1 else current[last_op_index + 1:]
-    #         new_text = f"(-{target})"
-    #         screen.set(current[:last_op_index + 1] + new_text)
-    #     return
 
     # プラスマイナス
     if text == "±":
