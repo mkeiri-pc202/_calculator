@@ -26,19 +26,9 @@ def format_result(expr: str) -> str:
     """
     try:
         result = 全体計算(expr)
-        # num = float(result)
         if result != '':
             return result
         else:
             return "エラー"
     except Exception:
         return "エラー"
-    # try:
-    #     result = 全体計算(expr)
-    #     num = float(result)
-    #     if num.is_integer():
-    #         return str(int(num))
-    #     else:
-    #         return str(num)
-    # except Exception:
-    #     return "エラー"
