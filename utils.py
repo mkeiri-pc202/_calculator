@@ -9,7 +9,8 @@ import:
 
 from keisan import 全体計算
 
-ALLOWED_OPERATORS = "+-*/%.^√E"
+ALLOWED_CHARS = "0123456789+-*/().%^√±E=C"
+ALLOWED_OPERATORS = "+-*/%^√E."
 
 def format_result(expr: str) -> str:
     """数式文字列を評価して、結果を文字列として返す

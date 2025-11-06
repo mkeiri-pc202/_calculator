@@ -5,8 +5,9 @@ handle_input関数で電卓の入力に応じて処理、画面に表示
 
 import:
     format_result(from utils): 計算結果を整形して表示用に変換
-    ALLOWED_OPERATORS(from utils): 入力を許可している演算子のリスト
-    re(標準ライブラリ): パーセントの正規表現マッチングに使用
+    ALLOWED_CHARS(from utils): 入力を許可している文字
+    ALLOWED_OPERATORS(from utils): 入力を許可している演算子
+    re(標準ライブラリ): 正規表現マッチングに使用
 """
 
 from utils import format_result
@@ -138,33 +139,60 @@ def handle_input(text: str, screen, state):
         return
 
     
+    # # プラスマイナス
+    # if text == "±":
+    #     # 入力した文字がなし、もしくは最後の文字列が演算子 + ( の場合は何もしない
+    #     if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
+    #         return
+        
+    #     # 文字列の最後が")"かつ文字列を右から検索して"("が右端になく、かつ文字列を右端から検索して"("の左隣に"-"がある場合(=負数)
+    #     if current[-1] == ")" and current.rfind("(") != -1 and current[current.rfind("(") + 1] == '-':
+    #         # rfind("(")で最後の"()"を検索、数値を抽出して反転
+    #         last_parentheses_index = current.rfind("(")
+    #         target = current[last_parentheses_index:]
+    #         cleaned = target.replace("(", "").replace(")", "")
+    #         result = str(int(cleaned) * -1)
+    #         screen.set(current[:last_parentheses_index] + result)
+    #         return
+    #     # 正数の場合
+    #     else:
+    #         last_op_index = max((current.rfind(op) for op in ALLOWED_OPERATORS))
+    #         target = current if last_op_index == -1 else current[last_op_index + 1:]
+    #         new_text = f"(-{target})"
+    #         screen.set(current[:last_op_index + 1] + new_text)
+    #     return
+
     # プラスマイナス
     if text == "±":
-        # 入力した文字がなし、もしくは最後の文字列が演算子 + ( の場合は入力できない
+        # 入力が空、または最後が演算子もしくは括弧なら何もしない
         if len(current) == 0 or current[-1] in ALLOWED_OPERATORS + "(":
             return
-        # 文字列の最後が")"かつ文字列を右から検索して"("が右端になく、かつ文字列を右端から検索して"("の左隣に"-"がある場合(=負数)
-        if current[-1] == ")" and current.rfind("(") != -1 and current[current.rfind("(") + 1] == '-':
-            # rfind("(")で最後の"()"を検索、数値を抽出して反転
-            last_parentheses_index = current.rfind("(")
-            target = current[last_parentheses_index:]
-            cleaned = target.replace("(", "").replace(")", "")
-            result = str(float(cleaned) * -1)
-            screen.set(current[:last_parentheses_index] + result)
+        # 正規表現で直前の括弧付きの整数もしくは括弧付きの小数をマッチング
+        match = re.search(r'(\(-\d+(\.\d+)?\)|\(\d+(\.\d+)?\)|\d+(\.\d+)?)$', current)
+        if not match:
             return
-        # 正数の場合
+
+        token = match.group(1)
+        start, end = match.span(1)
+        # 付け替え
+        if token.startswith("(-") and token.endswith(")"):
+            inner = token[2:-1]
+            new_token = inner
+        elif token.startswith("(") and token.endswith(")"):
+            inner = token[1:-1]
+            new_token = f"(-{inner})"
         else:
-            last_op_index = max((current.rfind(op) for op in ALLOWED_OPERATORS))
-            target = current if last_op_index == -1 else current[last_op_index + 1:]
-            new_text = f"(-{target})"
-            screen.set(current[:last_op_index + 1] + new_text)
+            new_token = f"(-{token})"
+        # 置き換え
+        new_current = current[:start] + new_token + current[end:]
+        screen.set(new_current)
         return
 
     # 括弧
     if text == "(":
         if len(current) == 0:
             screen.set(text)
-        elif current[-1] in "1234567890E":
+        elif current[-1] in "1234567890E" + ")":
             screen.set(current + "*" + text)
         else:    
             screen.set(current + text)
@@ -209,11 +237,21 @@ def handle_input(text: str, screen, state):
             else:
                 screen.set(current + text)
         reset_evaluated(state)
+        return
+
+    # 小数点
+    if text == ".":
+        match = re.search(r'(\d+(\.\d+)?)(\))?$', current)
+        if match and "." in match.group(1):
+            return
+        else:
+            screen.set(current + text)
+        reset_evaluated(state)
         return     
     
     # 演算子
     if text in "+-*/%.^":
-        if len(current) == 0:
+        if len(current) == 0 or current[-1] == "(":
             return
         if current[-1] in "+-*/%.^":
             screen.set(current[:-1] + text)
@@ -221,3 +259,5 @@ def handle_input(text: str, screen, state):
             screen.set(current + text)
         reset_evaluated(state)
         return
+    
+

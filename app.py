@@ -8,12 +8,13 @@ input_handler`モジュールの handle_input関数とCalculatorStateクラス�
 import:
     tkinter(標準ライブラリ): 電卓のインターフェースを作成するGUIライブラリ
     functools.partial(標準ライブラリ): 関数の一部の引数を固定した新たな関数を作成する
+    ALLOWED_CHARS(from utils): 入力許可をした文字
     handle_input(from input_handler): 入力に応じて数式を構築・評価する関数
     CalulatorState(from input_handler): 計算の状態(イコールしたかどうか)を保持するクラス
 """
 
 import tkinter as tk
-from utils import ALLOWED_OPERATORS
+from utils import ALLOWED_CHARS
 from input_handler import handle_input, CalculatorState
 from functools import partial
 
@@ -25,6 +26,7 @@ entry = tk.Entry(root, textvariable=screen, font=("Arial", 20), justify="right",
 entry.grid(row=0, column=0, columnspan=5)
 
 state = CalculatorState()
+
 
 def handle_click(event):
     """(画面上の)ボタンをクリックされたときに入力を処理する
@@ -41,7 +43,7 @@ def handle_click(event):
 def handle_key(event, screen, state):
     """キーボード入力を処理
 
-    入力されたキーが許可された文字(allowed_chars)であれば、handle_input関数を呼び出し処理
+    入力されたキーが許可された文字(ALLOWED_CHARS)であれば、handle_input関数を呼び出し処理
     Enterキーで計算実行(イコール)
     Backspaceキーでscreenの末尾が数字の場合、一文字削除してstate.just_evaluatedをFalseにする
     screenの末尾が演算子の場合はreturn
@@ -53,14 +55,13 @@ def handle_key(event, screen, state):
         state (CalculatorState): 電卓の状態管理オブジェクト
     """
     key = event.char
-    allowed_chars = "0123456789+-*/().%^√±E"
     
     if event.keysym == "Return":
         handle_input("=", screen, state)
     elif event.keysym == "BackSpace":
         screen.set(screen.get()[:-1])
         state.just_evaluated = False
-    elif key and key in allowed_chars:
+    elif key and key in ALLOWED_CHARS:
         handle_input(key, screen, state)
     else:
         return
