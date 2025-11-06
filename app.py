@@ -20,6 +20,8 @@ from functools import partial
 
 root = tk.Tk()
 root.title("電卓")
+root.geometry("310x415")
+root.resizable(False, False)
 
 screen = tk.StringVar()
 entry = tk.Entry(root, textvariable=screen, font=("Arial", 20), justify="right", state="readonly", takefocus=0)
