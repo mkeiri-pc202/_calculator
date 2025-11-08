@@ -106,8 +106,8 @@
   - input_handler.py(入力された文字列を計算可能な値に変換）
   - utils.py(calc.pyで作成したデータの受け取り、結果の表示) 
 
-### 9.1 データフロー（簡易）
-<img width="377" height="552" alt="Image" src="https://github.com/user-attachments/assets/d6f11707-f4bf-408d-8a5a-76cc6fa86608" />
+### 9.1 データフロー
+<img width="763" height="663" alt="Image" src="https://github.com/user-attachments/assets/ef66c7e8-9984-48c2-9ff7-93304b6fe2fb" />
 
 ---
 
